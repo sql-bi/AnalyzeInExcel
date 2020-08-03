@@ -64,6 +64,9 @@
     <ApplicationIcon>sqlbi-2400.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoUpdater.NET, Version=1.6.0.0, Culture=neutral, PublicKeyToken=501435c91b35f4bc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autoupdater.NET.Official.1.6.0\lib\net40\AutoUpdater.NET.dll</HintPath>
+    </Reference>
     <Reference Include="CommandLine, Version=2.8.0.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
       <HintPath>..\packages\CommandLineParser.2.8.0\lib\net45\CommandLine.dll</HintPath>
       <Private>True</Private>
@@ -154,6 +157,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="AnalyzeInExcelAutoUpdater.xml" />
     <Content Include="ExcelIconFromSvg.png" />
   </ItemGroup>
   <ItemGroup>

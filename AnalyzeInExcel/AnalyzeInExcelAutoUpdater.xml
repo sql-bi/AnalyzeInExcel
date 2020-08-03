@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<item>
+	<version>1.0.1.0</version>
+	<url>https://www.sqlbi.com/updates/AnalyzeInExcel.msi</url>
+	<changelog>https://github.com/sql-bi/AnalyzeInExcel/releases/</changelog>
+	<mandatory>false</mandatory>
+</item>

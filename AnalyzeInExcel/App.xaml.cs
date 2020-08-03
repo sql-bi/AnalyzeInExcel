@@ -6,6 +6,8 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Diagnostics;
+using AutoUpdaterDotNET;
+using System.Linq.Expressions;
 
 namespace AnalyzeInExcel
 {
@@ -17,6 +19,13 @@ namespace AnalyzeInExcel
         public Options AppOptions;
         protected override void OnStartup(StartupEventArgs e)
         {
+            AutoUpdater.HttpUserAgent = "AutoUpdater";
+            AutoUpdater.ShowSkipButton = true;
+            AutoUpdater.ShowRemindLaterButton = true;
+            AutoUpdater.LetUserSelectRemindLater = true;
+            AutoUpdater.Synchronous = true;
+            AutoUpdater.Start("https://www.sqlbi.com/updates/AnalyzeInExcelAutoUpdater.xml");
+
             // Read configuration
             var result = Parser.Default.ParseArguments<Options>(e.Args)
                 .WithNotParsed(errors => MessageBox.Show("Invalid configuration, check the pbitool.json file\n" + String.Join(";", from err in errors select err.ToString())))
