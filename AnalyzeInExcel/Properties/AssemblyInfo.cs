@@ -8,11 +8,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AnalyzeInExcel")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Analyze in Excel for Power BI Desktop")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("AnalyzeInExcel")]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
+[assembly: AssemblyCompany("SQLBI")]
+[assembly: AssemblyProduct("Analyze in Excel for Power BI Desktop")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
