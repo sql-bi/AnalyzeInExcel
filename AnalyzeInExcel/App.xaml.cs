@@ -24,7 +24,7 @@ namespace AnalyzeInExcel
             AutoUpdater.ShowRemindLaterButton = true;
             AutoUpdater.LetUserSelectRemindLater = true;
             AutoUpdater.Synchronous = true;
-            AutoUpdater.Start("https://www.sqlbi.com/updates/AnalyzeInExcelAutoUpdater.xml");
+            AutoUpdater.Start("https://cdn.sqlbi.com/updates/AnalyzeInExcelAutoUpdater.xml");
 
             // Read configuration
             var result = Parser.Default.ParseArguments<Options>(e.Args)
