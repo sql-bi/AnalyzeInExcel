@@ -32,7 +32,10 @@ steps:
 #     platform: '$(buildPlatform)'
 #     configuration: '$(buildConfiguration)'
 
-
+- task: AzureKeyVault@1
+  inputs:
+    azureSubscription: 'twelve21-signdotnetcore-connection'
+    keyVaultName: 'twelve21-key-vault'
 
 - task: CopyFiles@2
   inputs:
