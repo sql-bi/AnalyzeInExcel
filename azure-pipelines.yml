@@ -37,7 +37,8 @@ steps:
     installTaskMode: 'vdproj'
     SlnPath: 'AnalyzeInExcel.sln'
     VdprojPath: 'SetupAnalyzeInExcel/SetupAnalyzeInExcel.vdproj'
-    VsVersion: 'VS2017'
+    VsVersion: 'VS2017' 
+  continueOnError: true
 
 - task: CopyFiles@2
   inputs:
