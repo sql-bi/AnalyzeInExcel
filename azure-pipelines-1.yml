@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  vmImage: 'vs2017-win2016'
+  vmImage: 'windows-2019'
 
 variables:
   solution: '**/*.sln'
@@ -36,6 +36,13 @@ steps:
   inputs:
     azureSubscription: 'Sqlbi-KeyVault'
     keyVaultName: 'daxstudiocert'
+
+- powershell: |
+    $filePath = '$(Build.ArtifactStagingDirectory)\AnalyzeInExcel\bin\Release\AnalyzeInExcel.exe';
+    $base64 = '$(daxstudio-certificate)';
+    $buffer = [System.Convert]::FromBase64String($base64);
+    $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($buffer);
+    Set-AuthenticodeSignature -FilePath $filePath -Certificate $certificate;
 
 - task: CopyFiles@2
   inputs:
