@@ -21,6 +21,13 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'custom'
+    custom: 'tool'
+    arguments: 'install --global azuresigntool'
+  displayName: Install AzureSignTool
+  
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
@@ -32,23 +39,13 @@ steps:
 #     platform: '$(buildPlatform)'
 #     configuration: '$(buildConfiguration)'
 
-- task: AzureKeyVault@1
-  inputs:
-    azureSubscription: 'Sqlbi-KeyVault'
-    keyVaultName: 'daxstudiocert'
-
-- powershell: |
-    $filePath = '$(Build.ArtifactStagingDirectory)\AnalyzeInExcel\bin\Release\AnalyzeInExcel.exe';
-    $base64 = '$(daxstudio-certificate)';
-    $buffer = [System.Convert]::FromBase64String($base64);
-    $certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($buffer);
-    Set-AuthenticodeSignature -FilePath $filePath -Certificate $certificate;
-
 - task: CopyFiles@2
   inputs:
    Contents: '**'
    TargetFolder: '$(build.artifactstagingdirectory)/drop'
-   
+
+- script: AzureSignTool sign -du "$(SigningURL)" -kvu "$(SigningVaultURL)" -kvi "$(SigningClientId)" -kvs "$(SigningClientSecret)" -kvc "$(SigningCertName)" -v $(build.artifactstagingdirectory)/drop/AnalyzeInExcel.exe"
+
 #publish artifacts
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact:  drop'
