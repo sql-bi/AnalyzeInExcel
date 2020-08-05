@@ -34,8 +34,8 @@ steps:
 
 - task: AzureKeyVault@1
   inputs:
-    azureSubscription: 'twelve21-signdotnetcore-connection'
-    keyVaultName: 'twelve21-key-vault'
+    azureSubscription: 'Sqlbi-KeyVault'
+    keyVaultName: 'daxstudiocert'
 
 - task: CopyFiles@2
   inputs:
