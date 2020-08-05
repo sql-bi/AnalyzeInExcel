@@ -32,7 +32,15 @@ steps:
 #     platform: '$(buildPlatform)'
 #     configuration: '$(buildConfiguration)'
 
+- task: BuildInstaller@1
+  inputs:
+    installTaskMode: 'vdproj'
+    SlnPath: 'AnalyzeInExcel.sln'
+    VdprojPath: 'SetupAnalyzeInExcel/SetupAnalyzeInExcel.vdproj'
+    VsVersion: 'VS2017'
+
 - task: CopyFiles@2
   inputs:
    Contents: '**\bin\release\**'
    TargetFolder: '$(build.artifactstagingdirectory)/drop'
+
