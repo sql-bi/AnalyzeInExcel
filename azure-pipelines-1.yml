@@ -44,7 +44,7 @@ steps:
    Contents: '**'
    TargetFolder: '$(build.artifactstagingdirectory)/drop'
 
-- script: AzureSignTool sign -du "$(SigningURL)" -kvu "$(SigningVaultURL)" -kvi "$(SigningClientId)" -kvs "$(SigningClientSecret)" -kvc "$(SigningCertName)" -v $(build.artifactstagingdirectory)/drop/AnalyzeInExcel.exe"
+- script: AzureSignTool sign -du "$(SigningURL)" -kvu "$(SigningVaultURL)" -kvi "$(SigningClientId)" -kvs "$(SigningClientSecret)" -kvc "$(SigningCertName)" -v $(build.artifactstagingdirectory)/drop/AnalyzeInExcel/bin/Release/AnalyzeInExcel.exe"
 
 #publish artifacts
 - task: PublishBuildArtifacts@1
