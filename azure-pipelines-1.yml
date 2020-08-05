@@ -41,7 +41,7 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-   Contents: '**\release\**'
+   Contents: '**\bin\release\**'
    TargetFolder: '$(build.artifactstagingdirectory)/drop'
 
 - script: AzureSignTool sign -kvu "$(SigningVaultURL)" -kvi "$(SigningClientId)" -kvs "$(SigningClientSecret)" -kvc "$(SigningCertName)" -tr http://timestamp.digicert.com -v $(build.artifactstagingdirectory)/drop/AnalyzeInExcel/bin/Release/AnalyzeInExcel.exe"
