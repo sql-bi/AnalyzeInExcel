@@ -41,6 +41,6 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-   Contents: '**\bin\release\**'
+   Contents: '**\release\**'
    TargetFolder: '$(build.artifactstagingdirectory)/drop'
 
