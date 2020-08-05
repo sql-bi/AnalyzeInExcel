@@ -44,7 +44,16 @@ steps:
    Contents: '**\bin\release\**'
    TargetFolder: '$(build.artifactstagingdirectory)/drop'
 
-- script: AzureSignTool sign -kvu "$(SigningVaultURL)" -kvi "$(SigningClientId)" -kvs "$(SigningClientSecret)" -kvc "$(SigningCertName)" -tr http://timestamp.digicert.com -v $(build.artifactstagingdirectory)/drop/AnalyzeInExcel/bin/Release/AnalyzeInExcel.exe"
+- script: |
+    AzureSignTool sign
+    -kvu "$(SigningVaultURL)"
+    -kvi "$(SigningClientId)"
+    -kvs "$(SigningClientSecret)"
+    -kvc "$(SigningCertName)"
+    -tr http://timestamp.digicert.com
+    -v
+    "$(build.artifactstagingdirectory)/drop/AnalyzeInExcel/bin/Release/AnalyzeInExcel.exe"
+    "$(build.artifactstagingdirectory)/drop/ExternalToolsInstaller/bin/Release/ExternalToolsInstaller.dll"
 
 #publish artifacts
 - task: PublishBuildArtifacts@1
