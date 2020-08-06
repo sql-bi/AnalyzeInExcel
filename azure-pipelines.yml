@@ -12,18 +12,18 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'custom'
+    custom: 'tool'
+    arguments: 'install --global azuresigntool'
+  displayName: Install AzureSignTool
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
-
-# - task: DotNetCoreCLI@2
-#   inputs:
-#     command: 'custom'
-#     custom: 'tool'
-#     arguments: 'install --global azuresigntool'
-#   displayName: Install AzureSignTool
 
 - task: VSBuild@1
   inputs:
