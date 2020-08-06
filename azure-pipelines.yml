@@ -18,12 +18,12 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'custom'
-    custom: 'tool'
-    arguments: 'install --global azuresigntool'
-  displayName: Install AzureSignTool
+# - task: DotNetCoreCLI@2
+#   inputs:
+#     command: 'custom'
+#     custom: 'tool'
+#     arguments: 'install --global azuresigntool'
+#   displayName: Install AzureSignTool
 
 - task: VSBuild@1
   inputs:
