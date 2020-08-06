@@ -12,21 +12,13 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-
-- task: UseDotNet@2
-  displayName: 'Use .NET Core sdk'
-  inputs:
-    packageType: runtime
-    version: 2.1.0
-    installationPath: $(Agent.ToolsDirectory)/dotnet
     
 - task: DotNetCoreCLI@2
   inputs:
     command: 'custom'
     custom: 'tool'
-    arguments: 'install --global azuresigntool'
+    arguments: 'update --global azuresigntool'
   displayName: Install AzureSignTool
-  continueOnError: true
 
 - task: NuGetToolInstaller@1
 
