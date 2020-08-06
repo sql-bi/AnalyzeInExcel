@@ -18,11 +18,21 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'custom'
+    custom: 'tool'
+    arguments: 'install --global azuresigntool'
+  displayName: Install AzureSignTool
+
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- script: AzureSignTool sign -kvu "$(SigningVaultURL)" -kvi "$(SigningClientId)" -kvs "$(SigningClientSecret)" -kvc "$(SigningCertName)" -tr http://timestamp.digicert.com -v "$(Build.SourcesDirectory)/AnalyzeInExcel/bin/Release/AnalyzeInExcel.exe" "$(Build.SourcesDirectory)/ExternalToolsInstaller/bin/Release/ExternalToolsInstaller.dll"
+  name: CodeSigning
 
 - task: BatchScript@1
   inputs:
@@ -42,9 +52,12 @@ steps:
     workingFolder:  'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild\'
     arguments: 'undo'
 
+- script: AzureSignTool sign -kvu "$(SigningVaultURL)" -kvi "$(SigningClientId)" -kvs "$(SigningClientSecret)" -kvc "$(SigningCertName)" -tr http://timestamp.digicert.com -v "$(Build.SourcesDirectory)/SetupAnalyzeInExcel/Release/AnalyzeInExcel.msi"
+  name: CodeSigning
+
 - task: CopyFiles@2
   inputs:
-   Contents: '**'
+   Contents: '$(Build.SourcesDirectory)/SetupAnalyzeInExcel/Release/AnalyzeInExcel.msi'
    TargetFolder: '$(build.artifactstagingdirectory)/drop'
    
 #publish artifacts
