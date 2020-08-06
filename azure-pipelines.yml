@@ -26,6 +26,7 @@ steps:
     custom: 'tool'
     arguments: 'install --global azuresigntool'
   displayName: Install AzureSignTool
+  continueOnError: true
 
 - task: NuGetToolInstaller@1
 
