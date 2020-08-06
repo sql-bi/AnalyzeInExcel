@@ -12,7 +12,13 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-    
+
+- task: UseDotNet@2
+  displayName: Use .NET Core 2.1
+  inputs:
+    version: '2.1.x'
+    packageType: runtime
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'custom'
