@@ -32,7 +32,7 @@ steps:
     configuration: '$(buildConfiguration)'
 
 - script: AzureSignTool sign -kvu "$(SigningVaultURL)" -kvi "$(SigningClientId)" -kvs "$(SigningClientSecret)" -kvc "$(SigningCertName)" -tr http://timestamp.digicert.com -v "$(Build.SourcesDirectory)/AnalyzeInExcel/bin/Release/AnalyzeInExcel.exe" "$(Build.SourcesDirectory)/ExternalToolsInstaller/bin/Release/ExternalToolsInstaller.dll"
-  name: CodeSigning
+  name: CodeSigningEXEDLL
 
 - task: BatchScript@1
   inputs:
@@ -53,7 +53,7 @@ steps:
     arguments: 'undo'
 
 - script: AzureSignTool sign -kvu "$(SigningVaultURL)" -kvi "$(SigningClientId)" -kvs "$(SigningClientSecret)" -kvc "$(SigningCertName)" -tr http://timestamp.digicert.com -v "$(Build.SourcesDirectory)/SetupAnalyzeInExcel/Release/AnalyzeInExcel.msi"
-  name: CodeSigning
+  name: CodeSigningMSI
 
 - task: CopyFiles@2
   inputs:
