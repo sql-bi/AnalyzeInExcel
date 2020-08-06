@@ -1,7 +1,4 @@
-# .NET Desktop
-# Build and run tests for .NET Desktop or Windows classic desktop solutions.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+# Build and sign on Azure DevOps pipeline - no MSI
 
 trigger:
 - master
@@ -34,18 +31,13 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-# - task: VSTest@2
-#   inputs:
-#     platform: '$(buildPlatform)'
-#     configuration: '$(buildConfiguration)'
+- script: AzureSignTool sign -kvu "$(SigningVaultURL)" -kvi "$(SigningClientId)" -kvs "$(SigningClientSecret)" -kvc "$(SigningCertName)" -tr http://timestamp.digicert.com -v "$(Build.SourcesDirectory)/AnalyzeInExcel/bin/Release/AnalyzeInExcel.exe" "$(Build.SourcesDirectory)/ExternalToolsInstaller/bin/Release/ExternalToolsInstaller.dll"
+  name: CodeSigning
 
 - task: CopyFiles@2
   inputs:
    Contents: '**\bin\release\**'
    TargetFolder: '$(build.artifactstagingdirectory)/drop'
-
-- script: AzureSignTool sign -kvu "$(SigningVaultURL)" -kvi "$(SigningClientId)" -kvs "$(SigningClientSecret)" -kvc "$(SigningCertName)" -tr http://timestamp.digicert.com -v "$(build.artifactstagingdirectory)/drop/AnalyzeInExcel/bin/Release/AnalyzeInExcel.exe" "$(build.artifactstagingdirectory)/drop/ExternalToolsInstaller/bin/Release/ExternalToolsInstaller.dll"
-  name: CodeSigning
 
 #publish artifacts
 - task: PublishBuildArtifacts@1
