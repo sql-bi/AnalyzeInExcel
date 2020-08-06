@@ -1,0 +1,38 @@
+# Build on Azure DevOps pipeline - no MSI, no sign
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-2019'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: CopyFiles@2
+  inputs:
+   Contents: '**\bin\release\**'
+   TargetFolder: '$(build.artifactstagingdirectory)/drop'
+   flattenFolders: true
+
+#publish artifacts
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact:  drop'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)/drop'
+
