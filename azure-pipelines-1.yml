@@ -1,4 +1,4 @@
-# Build and sign on Azure DevOps pipeline - no MSI
+# Build on Azure DevOps pipeline - no MSI, no sign
 
 trigger:
 - master
@@ -28,6 +28,7 @@ steps:
   inputs:
    Contents: '**\bin\release\**'
    TargetFolder: '$(build.artifactstagingdirectory)/drop'
+   flattenFolders: true
 
 #publish artifacts
 - task: PublishBuildArtifacts@1
