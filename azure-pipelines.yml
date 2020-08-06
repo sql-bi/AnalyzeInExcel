@@ -66,6 +66,7 @@ steps:
   inputs:
    Contents: '$(Build.SourcesDirectory)/SetupAnalyzeInExcel/Release/AnalyzeInExcel.msi'
    TargetFolder: '$(build.artifactstagingdirectory)/drop'
+   flattenFolders: true
    
 #publish artifacts
 - task: PublishBuildArtifacts@1
