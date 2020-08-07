@@ -134,10 +134,15 @@ namespace ExternalToolsInstaller
             string externalToolsExe = System.IO.Path.Combine(externalToolsDirectory, EXTERNALTOOLS_EXENAME);
             externalToolConfiguration.path = externalToolsExe;
 
-            // Fix telemetry argument
+            // Remove existing telemetry option
+            string telemetryOption = $" {TELEMETRY_ARGUMENT}";
+            externalToolConfiguration.arguments = externalToolConfiguration.arguments.Replace(telemetryOption, "");
+            externalToolConfiguration.arguments = externalToolConfiguration.arguments.Replace(telemetryOption.Trim(), "");
+
+            // Add telemetry argument if telemetry is enabled during setup
             if (telemetryEnabled)
             {
-                externalToolConfiguration.arguments += $" {TELEMETRY_ARGUMENT}";
+                externalToolConfiguration.arguments += telemetryOption;
                 Context.LogMessage($"Telemetry enabled");
             }
 
