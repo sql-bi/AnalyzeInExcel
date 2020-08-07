@@ -1,13 +1,10 @@
 ﻿using CommandLine;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Diagnostics;
 using AutoUpdaterDotNET;
-using System.Linq.Expressions;
 
 namespace AnalyzeInExcel
 {
@@ -17,15 +14,20 @@ namespace AnalyzeInExcel
     public partial class App : Application
     {
         public Options AppOptions;
-        protected override void OnStartup(StartupEventArgs e)
+
+        public void CheckUpdates(bool synchronous = true)
         {
             AutoUpdater.HttpUserAgent = "AutoUpdater";
             AutoUpdater.ShowSkipButton = true;
             AutoUpdater.ShowRemindLaterButton = true;
             AutoUpdater.LetUserSelectRemindLater = true;
-            AutoUpdater.Synchronous = true;
-            AutoUpdater.Start("https://cdn.sqlbi.com/updates/AnalyzeInExcelAutoUpdater.xml");
+            AutoUpdater.Synchronous = synchronous;
+            // The random number guarantees that the web client cache is not used (it is applied often even though internally the policy is disabled)
+            AutoUpdater.Start($@"https://cdn.sqlbi.com/updates/AnalyzeInExcelAutoUpdater.xml?random={new Random().Next()}");
+        }
 
+        protected override void OnStartup(StartupEventArgs e)
+        {
             // Read configuration
             var result = Parser.Default.ParseArguments<Options>(e.Args)
                 .WithNotParsed(errors => MessageBox.Show("Invalid configuration, check the pbitool.json file\n" + String.Join(";", from err in errors select err.ToString())))
@@ -56,6 +58,8 @@ namespace AnalyzeInExcel
                     tc.TrackEvent("Run Excel");
                     p.Start();
                     tc.Flush();
+                    // Check updates synchronously when Excel starts, no wait for Excel
+                    CheckUpdates(true);
                     this.Shutdown(0);
                 }
                 catch (Exception ex)
@@ -70,6 +74,9 @@ namespace AnalyzeInExcel
                 tc.TrackEvent("Configuration incomplete");
                 tc.Flush();
             }
+
+            // Check updates asynchronously when there is an error, while displaying the diagnostic message
+            CheckUpdates(false);
 
             //// start application window
             MainWindow mw = new MainWindow();
