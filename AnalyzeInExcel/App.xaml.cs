@@ -56,10 +56,8 @@ namespace AnalyzeInExcel
                 .WithNotParsed(errors => ShowMessage("Invalid configuration, check the pbitool.json file\n" + String.Join(";", from err in errors select err.ToString())))
                 .WithParsed(options => AppOptions = options);
 
-            Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration = Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.CreateDefault();
-            configuration.InstrumentationKey = "60ab83db-108f-45ee-b537-d70dc47d3193";
-            configuration.DisableTelemetry = (AppOptions.Telemetry == false);
-            Microsoft.ApplicationInsights.TelemetryClient tc = new Microsoft.ApplicationInsights.TelemetryClient(configuration);
+            bool disableTelemetry = (AppOptions.Telemetry == false);
+            TelemetryHelper th = new TelemetryHelper(disableTelemetry);
 
             string serverName = ((App)Application.Current).AppOptions?.Server;
             string databaseName = ((App)Application.Current).AppOptions?.Database;
@@ -68,15 +66,10 @@ namespace AnalyzeInExcel
             {
                 try
                 {
-                    if (serverName.StartsWith("XXXpbiazure"))
+                    if (string.IsNullOrEmpty(cubeName))
                     {
-                        ShowMessage("Power BI is connected to an external dataset on Power BI. You must connect Excel to the external dataset.");
-                        tc.TrackEvent("External Power BI Dataset");
-                    }
-                    else if (string.IsNullOrEmpty(cubeName))
-                    {
-                        ShowMessage("Power BI has an empty model or it is connected to an external dataset. You must connect Excel to the external dataset.");
-                        tc.TrackEvent("Model not available");
+                        ShowMessage("Power BI has an empty model or it is connected to an unkonwn external dataset. You cannot connect Excel.");
+                        th.TrackEvent("Model not available");
                     }
                     else if (ExcelHelper.IsExcelAvailable())
                     {
@@ -98,30 +91,30 @@ namespace AnalyzeInExcel
                                 UseShellExecute = true
                             }
                         };
-                        tc.TrackEvent("Run Excel");
+                        th.TrackEvent("Run Excel");
                         p.Start();
                     }
                     else
                     {
                         ShowMessage("Excel is not available. Please check whether Excel is correctly installed.");
-                        tc.TrackEvent("Excel not available");
+                        th.TrackEvent("Excel not available");
                     }
-                    tc.Flush();
+                    th.Flush();
                     // Check updates synchronously when Excel starts, no wait for Excel
                     CheckUpdates(true);
                     this.Shutdown(0);
                 }
                 catch (Exception ex)
                 {
-                    tc.TrackException(ex);
-                    tc.Flush();
+                    th.TrackException(ex);
+                    th.Flush();
                     ShowMessage("Error launching Excel: " + ex.Message);
                 }
             }
             else
             {
-                tc.TrackEvent("Configuration incomplete");
-                tc.Flush();
+                th.TrackEvent("Configuration incomplete");
+                th.Flush();
             }
 
             // Check updates asynchronously when there is an error, while displaying the diagnostic message
