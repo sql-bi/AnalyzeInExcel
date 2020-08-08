@@ -111,8 +111,10 @@ namespace ExternalToolsInstaller
         private void ExternalToolsInstaller_AfterInstall(object sender, InstallEventArgs e)
         {
             bool telemetryEnabled = IsSetupTelemetryEnabled();
-            var ev = new EventTelemetry();
-            ev.Name = "Install";
+            var ev = new EventTelemetry
+            {
+                Name = "Install"
+            };
 
             // Fix version installed
             ExternalToolConfiguration externalToolConfiguration = ReadExternalToolConfiguration();
@@ -174,8 +176,10 @@ namespace ExternalToolsInstaller
             
             // Enable telemetry if it was enabled in configuration file or if there is no configuration
             bool telemetryEnabled = externalToolConfiguration?.arguments?.Contains(TELEMETRY_ARGUMENT) ?? true;
-            var ev = new EventTelemetry();
-            ev.Name = "Uninstall";
+            var ev = new EventTelemetry
+            {
+                Name = "Uninstall"
+            };
             ev.Properties["Version"] = versionInstalled;
 
             // Initialize Telemetry

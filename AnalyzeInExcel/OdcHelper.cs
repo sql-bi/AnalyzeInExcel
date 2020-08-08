@@ -7,6 +7,7 @@ namespace AnalyzeInExcel
     {
         public static void CreateOdcFile(string datasource, string database, string cube)
         {
+            string oledbConnectionString = ModelHelper.GetOleDbConnectionString(datasource, database);
             string odcHeader = @"
 <html xmlns:o=""urn:schemas-microsoft-com:office:office""
 xmlns=""http://www.w3.org/TR/REC-html40"">
@@ -28,9 +29,9 @@ xmlns=""http://www.w3.org/TR/REC-html40"">
   xmlns:odc=""urn:schemas-microsoft-com:office:odc""
   xmlns=""http://www.w3.org/TR/REC-html40"">
   <odc:Connection odc:Type=""OLEDB"">
-   <odc:ConnectionString>Provider=MSOLAP;Integrated Security=SSPI;Persist Security Info=True;Data Source={0};Update Isolation Level=2;Initial Catalog={1}</odc:ConnectionString>
+   <odc:ConnectionString>{0}</odc:ConnectionString>
    <odc:CommandType>Cube</odc:CommandType>
-   <odc:CommandText>{2}</odc:CommandText>
+   <odc:CommandText>{1}</odc:CommandText>
   </odc:Connection>
  </odc:OfficeDataConnection>
 </xml>";
@@ -120,7 +121,7 @@ function init() {
 ";
 
             var odcPath = OdcFilePath();
-            File.WriteAllText(odcPath, odcHeader + string.Format(odcBody, datasource, database, cube) + odcFooter);
+            File.WriteAllText(odcPath, odcHeader + string.Format(odcBody, oledbConnectionString, cube) + odcFooter);
 
         }
 

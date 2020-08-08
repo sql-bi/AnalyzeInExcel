@@ -3420,15 +3420,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Analyze in Excel for Power BI Desktop"
-        "ProductCode" = "8:{EF8F8D3C-B20D-4F5D-8CC4-9136EFE2F156}"
-        "PackageCode" = "8:{288320B6-9C1F-48DD-A698-D8D2AEDD5D22}"
+        "ProductCode" = "8:{BB602700-1871-4E9B-9006-D5C8DB14B3C7}"
+        "PackageCode" = "8:{B3E70D1B-D2B5-4592-AF7F-B003F750D83F}"
         "UpgradeCode" = "8:{FC2F9C00-CAD5-455E-BD9D-B1C607F4ABDA}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.0.1"
         "Manufacturer" = "8:Sqlbi"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -4116,7 +4116,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B8059F38185844FF9E7100633B552E00"
             {
-            "SourcePath" = "8:..\\AnalyzeInExcel\\obj\\Debug\\AnalyzeInExcel.exe"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3C819D033B8E4ED29DA3C4B4E2E7B98C"
@@ -4144,7 +4144,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_BE740B1BEB9D410F82DDE5AF811E1E7C"
             {
-            "SourcePath" = "8:..\\ExternalToolsInstaller\\obj\\Debug\\ExternalToolsInstaller.dll"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3C819D033B8E4ED29DA3C4B4E2E7B98C"
