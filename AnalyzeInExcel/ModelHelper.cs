@@ -77,13 +77,13 @@ namespace AnalyzeInExcel
         /// <param name="serverName">Server name</param>
         /// <param name="databaseName">Database name</param>
         /// <returns>true it the connection has a data model</returns>
-        public static string GetModelName(string serverName, string databaseName)
+        public static string GetModelName(string serverName, string databaseName, TelemetryHelper th)
         {
             string result = null;
             string connectionString = GetOleDbConnectionString(serverName, databaseName);
-            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            try
             {
-                try
+                using (OleDbConnection connection = new OleDbConnection(connectionString))
                 {
                     using (OleDbCommand command = new OleDbCommand("select CUBE_NAME from $SYSTEM.MDSCHEMA_CUBES", connection))
                     {
@@ -98,10 +98,14 @@ namespace AnalyzeInExcel
                         }
                     }
                 }
-                catch (System.Data.Common.DbException)
-                {
-                    // Ignore DB Exception and return a null model name
-                }
+            }
+            catch (System.Data.Common.DbException ex)
+            {
+                // Ignore DbException and return a null model name
+
+                // Send exception to Telemetry for further investigation
+                th.TrackException(ex);
+                th.Flush();
             }
             return result;
         }

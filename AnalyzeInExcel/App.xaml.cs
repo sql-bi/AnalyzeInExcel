@@ -59,67 +59,71 @@ namespace AnalyzeInExcel
             bool disableTelemetry = (AppOptions.Telemetry == false);
             TelemetryHelper th = new TelemetryHelper(disableTelemetry);
 
-            string serverName = ((App)Application.Current).AppOptions?.Server;
-            string databaseName = ((App)Application.Current).AppOptions?.Database;
-            string cubeName = ModelHelper.GetModelName(serverName, databaseName);
-            if (serverName != null && databaseName != null)
+            try
             {
-                try
+                string serverName = ((App)Application.Current).AppOptions?.Server;
+                string databaseName = ((App)Application.Current).AppOptions?.Database;
+                string cubeName = ModelHelper.GetModelName(serverName, databaseName, th);
+                if (serverName != null && databaseName != null)
                 {
-                    if (string.IsNullOrEmpty(cubeName))
+                    try
                     {
-                        ShowMessage("Power BI has an empty model or it is connected to an unkonwn external dataset. You cannot connect Excel.");
-                        th.TrackEvent("Model not available");
-                    }
-                    else if (ExcelHelper.IsExcelAvailable())
-                    {
-                        // TODO: Manage options requested
-                        if (OptionsRequested)
+                        if (string.IsNullOrEmpty(cubeName))
                         {
-                            // TODO request action / configuration to users
+                            ShowMessage("Power BI has an empty model or it is connected to an unkonwn external dataset. You cannot connect Excel.");
+                            th.TrackEvent("Model not available");
                         }
-
-                        // Create ODC file
-                        OdcHelper.CreateOdcFile(serverName, databaseName, cubeName);
-                        var fileName = OdcHelper.OdcFilePath();
-
-                        // Open ODC file
-                        var p = new Process
+                        else if (ExcelHelper.IsExcelAvailable())
                         {
-                            StartInfo = new ProcessStartInfo(fileName)
+                            // TODO: Manage options requested
+                            if (OptionsRequested)
                             {
-                                UseShellExecute = true
+                                // TODO request action / configuration to users
                             }
-                        };
-                        th.TrackEvent("Run Excel");
-                        p.Start();
+                            
+                            RunExcelProcess(serverName, databaseName, cubeName);
+                            th.TrackEvent("Run Excel");
+                        }
+                        else
+                        {
+                            ShowMessage("Excel is not available. Please check whether Excel is correctly installed.");
+                            th.TrackEvent("Excel not available");
+                        }
+                        th.Flush();
+
+                        // Check updates synchronously when Excel starts, no wait for Excel
+                        CheckUpdates(true);
+                        this.Shutdown(0);
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        ShowMessage("Excel is not available. Please check whether Excel is correctly installed.");
-                        th.TrackEvent("Excel not available");
+                        th.TrackException(ex);
+                        th.Flush();
+                        ShowMessage("Error launching Excel: " + ex.Message);
                     }
-                    th.Flush();
-                    // Check updates synchronously when Excel starts, no wait for Excel
-                    CheckUpdates(true);
-                    this.Shutdown(0);
                 }
-                catch (Exception ex)
+                else
                 {
-                    th.TrackException(ex);
+                    th.TrackEvent("Configuration incomplete");
                     th.Flush();
-                    ShowMessage("Error launching Excel: " + ex.Message);
                 }
+
+                // Check updates asynchronously when there is an error, while displaying the diagnostic message
+                CheckUpdates(false);
+
+                OpenDiagnosticWindow(serverName, databaseName);
             }
-            else
+            catch (Exception ex)
             {
-                th.TrackEvent("Configuration incomplete");
+                // Send any exception to Telemetry
+                th.TrackException(ex);
                 th.Flush();
+                throw;
             }
 
-            // Check updates asynchronously when there is an error, while displaying the diagnostic message
-            CheckUpdates(false);
-
+        }
+        private void OpenDiagnosticWindow(string serverName, string databaseName)
+        {
             //// start application window
             MainWindow mw = new MainWindow();
             mw.diagnosticInfo.Content = $@"Current configuration
@@ -132,6 +136,23 @@ includes the following argument:
   ""arguments"": ""--telemetry --server =\""%server%\"" --database=\""%database%\""
 ";
             mw.Show();
+        }
+
+        private void RunExcelProcess(string serverName, string databaseName, string cubeName)
+        {
+            // Create ODC file
+            OdcHelper.CreateOdcFile(serverName, databaseName, cubeName);
+            var fileName = OdcHelper.OdcFilePath();
+
+            // Open ODC file
+            var p = new Process
+            {
+                StartInfo = new ProcessStartInfo(fileName)
+                {
+                    UseShellExecute = true
+                }
+            };
+            p.Start();
         }
     }
 }
