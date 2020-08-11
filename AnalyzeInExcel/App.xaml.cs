@@ -15,6 +15,7 @@ namespace AnalyzeInExcel
     public partial class App : Application
     {
         public Options AppOptions;
+        const string MSOLAP_DRIVER_URL = @"https://go.microsoft.com/fwlink/?LinkId=746283";
 
         public void CheckUpdates(bool synchronous = true)
         {
@@ -45,6 +46,10 @@ namespace AnalyzeInExcel
         {
             return MessageBox.Show(message, "Analyze in Excel for Power BI Desktop");
         }
+        public MessageBoxResult ShowMessageQuestion(string message)
+        {
+            return MessageBox.Show(message, "Analyze in Excel for Power BI Desktop",MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -63,7 +68,27 @@ namespace AnalyzeInExcel
             {
                 string serverName = ((App)Application.Current).AppOptions?.Server;
                 string databaseName = ((App)Application.Current).AppOptions?.Database;
-                string cubeName = ModelHelper.GetModelName(serverName, databaseName, th);
+                bool goodMsOlapDriver = ModelHelper.HasMsOlapDriver();
+                if (!goodMsOlapDriver)
+                {
+                    th.TrackEvent("MSOLAP driver not found");
+                    if (ShowMessageQuestion($"Excel needs a component called MSOLAP driver to connect to Power BI. The MSOLAP driver might be missing or not updated on this device. Therefore, Excel might not connect to Power BI. You can install the updated Microsoft MSOLAP driver from this link: {MSOLAP_DRIVER_URL} \n\nClick YES if you want to download the updated MSOLAP driver and install it.\nClick NO to continue without any update.") == MessageBoxResult.Yes)
+                    {
+                        try
+                        {
+                            th.TrackEvent("Requested MSOLAP driver setup");
+                            UpdateMsOlapDriver();
+                        }
+                        catch (Exception ex)
+                        {
+                            // Send any exception to Telemetry
+                            th.TrackException(ex);
+                            ShowMessage($"Error running MSOLAP update: {ex.Message}");
+                        }
+                    }
+                }
+                // We use the default "Model" string if the MSOLAP driver is not available - if this happens, the previous warning helps understanding possible issues
+                string cubeName = goodMsOlapDriver ? ModelHelper.GetModelName(serverName, databaseName, th) : "Model"; 
                 if (serverName != null && databaseName != null)
                 {
                     try
@@ -121,6 +146,17 @@ namespace AnalyzeInExcel
                 throw;
             }
 
+            void UpdateMsOlapDriver()
+            {
+                var p = new Process
+                {
+                    StartInfo = new ProcessStartInfo(MSOLAP_DRIVER_URL)
+                    {
+                        UseShellExecute = true
+                    }
+                };
+                p.Start();
+            }
         }
         private void OpenDiagnosticWindow(string serverName, string databaseName)
         {
@@ -141,8 +177,7 @@ includes the following argument:
         private void RunExcelProcess(string serverName, string databaseName, string cubeName)
         {
             // Create ODC file
-            OdcHelper.CreateOdcFile(serverName, databaseName, cubeName);
-            var fileName = OdcHelper.OdcFilePath();
+            var fileName = OdcHelper.CreateOdcFile(serverName, databaseName, cubeName);
 
             // Open ODC file
             var p = new Process

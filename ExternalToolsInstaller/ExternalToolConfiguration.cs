@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ExternalToolsInstaller
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Use names of external configuration")]
     public class ExternalToolConfiguration
     {
         public string version { get; set; }

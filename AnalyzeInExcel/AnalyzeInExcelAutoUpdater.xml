@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <item>
-	<version>1.0.2.0</version>
-	<url>https://cdn.sqlbi.com/updates/AnalyzeInExcel-1.0.2.msi</url>
+	<version>1.0.4.0</version>
+	<url>https://cdn.sqlbi.com/updates/AnalyzeInExcel-1.0.4.msi</url>
 	<changelog>https://github.com/sql-bi/AnalyzeInExcel/releases/</changelog>
 	<mandatory>false</mandatory>
 </item>

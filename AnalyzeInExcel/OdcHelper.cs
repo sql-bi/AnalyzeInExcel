@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Windows;
 
 namespace AnalyzeInExcel
 {
     public static class OdcHelper
     {
-        public static void CreateOdcFile(string datasource, string database, string cube)
+        public static string CreateOdcFile(string datasource, string database, string cube)
         {
             string oledbConnectionString = ModelHelper.GetOleDbConnectionString(datasource, database);
             string odcHeader = @"
@@ -120,18 +121,44 @@ function init() {
 
 ";
 
-            var odcPath = OdcFilePath();
+            var odcPath = GetOdcFilePath();
             File.WriteAllText(odcPath, odcHeader + string.Format(odcBody, oledbConnectionString, cube) + odcFooter);
-
+            return odcPath;
         }
 
-        public static string OdcFilePath()
+        private static string GetOdcFilePath()
         {
-            var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create);
-            var dsPath = Path.Combine(myDocs, "My Data Sources", "AnalyzeInExcel.odc");
+            const string ODC_FILENAME = "AnalyzeInExcel.odc";
+            const string MY_DATA_SOURCES = "My Data Sources"; // This is not localized - TODO find the localized version of this name
 
-            // ensure that the folder exists
-            Directory.CreateDirectory(Path.GetDirectoryName(dsPath));
+            var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create);
+            var dsPath = Path.Combine(myDocs, MY_DATA_SOURCES, ODC_FILENAME);
+
+            try
+            {
+                // ensure that the folder exists
+                Directory.CreateDirectory(Path.GetDirectoryName(dsPath));
+            }
+            catch (Exception)
+            {
+                // If the folder is not available or accessible, try the file in MyDocuments
+                dsPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    ODC_FILENAME);
+            }
+
+            try
+            {
+                using (StreamWriter w = File.AppendText(dsPath))
+                {
+                    // If the file can be opened this way, it should be writable
+                }
+            }
+            catch ( Exception )
+            {
+                // If the previous attempt fails, the last resort is creating the file in the TEMP directory
+                dsPath = Path.GetTempFileName().Replace(".tmp", "AnalyzeInExcel.odc");
+            }
             return dsPath;
         }
     }

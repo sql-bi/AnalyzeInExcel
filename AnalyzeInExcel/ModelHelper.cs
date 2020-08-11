@@ -9,6 +9,8 @@ namespace AnalyzeInExcel
 {
     public class ModelHelper
     {
+        const string MSOLAP_DRIVER_NAME = "MSOLAP"; // We get the latest available. We currently don't enforce MSOLAP.8
+
         internal enum AsInstanceType
         {
             Other,
@@ -44,6 +46,26 @@ namespace AnalyzeInExcel
         }
 
         /// <summary>
+        /// Check whether the machine has the MSOLAP driver installed
+        /// The driver could be available in 32-bit and not in 64-bit
+        /// This would work in Excel, but it is better to try get the driver in that case
+        /// </summary>
+        /// <returns></returns>
+        public static bool HasMsOlapDriver()
+        {
+            const string SOURCES_NAME = "SOURCES_NAME";
+
+            var oleEnum = new OleDbEnumerator();
+            var elems = oleEnum.GetElements();
+            if (elems != null && elems.Rows != null)
+                foreach (System.Data.DataRow row in elems.Rows)
+                    if (!row.IsNull(SOURCES_NAME) && row[SOURCES_NAME] is string)
+                        if (row[SOURCES_NAME].ToString() == MSOLAP_DRIVER_NAME )
+                            return true;
+            return false;
+        }
+
+        /// <summary>
         /// Returns the OLE DB connection string based on serverName and databaseName
         /// </summary>
         /// <param name="serverName"></param>
@@ -56,16 +78,16 @@ namespace AnalyzeInExcel
             switch (GetAsInstanceType(serverName))
             {
                 case AsInstanceType.PbiDataset: // Integrated Security=ClaimsToken;
-                    connectionString = $"Provider=MSOLAP;Persist Security Info=True;Initial Catalog=sobe_wowvirtualserver-{databaseName};Data Source={serverName};MDX Compatibility=1;Safety Options=2;MDX Missing Member Mode=Error;Identity Provider=https://login.microsoftonline.com/common, https://analysis.windows.net/powerbi/api, 929d0ec0-7a41-4b1e-bc7c-b754a28bddcc;Update Isolation Level=2";
+                    connectionString = $"Provider={MSOLAP_DRIVER_NAME};Persist Security Info=True;Initial Catalog=sobe_wowvirtualserver-{databaseName};Data Source={serverName};MDX Compatibility=1;Safety Options=2;MDX Missing Member Mode=Error;Identity Provider=https://login.microsoftonline.com/common, https://analysis.windows.net/powerbi/api, 929d0ec0-7a41-4b1e-bc7c-b754a28bddcc;Update Isolation Level=2";
                     break;
                 case AsInstanceType.PbiDedicated:
                 case AsInstanceType.PbiPremium:
                 case AsInstanceType.AsAzure:
-                    connectionString = $"Provider=MSOLAP;Persist Security Info=True;Data Source={serverName};Update Isolation Level=2;Initial Catalog={databaseName}";
+                    connectionString = $"Provider={MSOLAP_DRIVER_NAME};Persist Security Info=True;Data Source={serverName};Update Isolation Level=2;Initial Catalog={databaseName}";
                     break;
                 case AsInstanceType.Other:
                 default:
-                    connectionString = $"Provider=MSOLAP;Integrated Security=SSPI;Persist Security Info=True;Data Source={serverName};Update Isolation Level=2;Initial Catalog={databaseName}";
+                    connectionString = $"Provider={MSOLAP_DRIVER_NAME};Integrated Security=SSPI;Persist Security Info=True;Data Source={serverName};Update Isolation Level=2;Initial Catalog={databaseName}";
                     break;
             }
             return connectionString;

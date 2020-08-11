@@ -1629,7 +1629,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -3420,15 +3420,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Analyze in Excel for Power BI Desktop"
-        "ProductCode" = "8:{46AF827B-0E49-4907-92FC-C60096C08105}"
-        "PackageCode" = "8:{588D46CE-2E9A-45E4-BDBA-03AA560416EF}"
+        "ProductCode" = "8:{2862FE53-3704-4B41-80B0-693BFFC187F0}"
+        "PackageCode" = "8:{CEF1CAA5-4465-474B-A077-E2A7C7D6414C}"
         "UpgradeCode" = "8:{FC2F9C00-CAD5-455E-BD9D-B1C607F4ABDA}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.3"
+        "ProductVersion" = "8:1.0.4"
         "Manufacturer" = "8:Sqlbi"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -4116,7 +4116,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B8059F38185844FF9E7100633B552E00"
             {
-            "SourcePath" = "8:..\\AnalyzeInExcel\\obj\\Debug\\AnalyzeInExcel.exe"
+            "SourcePath" = "8:..\\AnalyzeInExcel\\obj\\Release\\AnalyzeInExcel.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3C819D033B8E4ED29DA3C4B4E2E7B98C"
@@ -4144,7 +4144,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_BE740B1BEB9D410F82DDE5AF811E1E7C"
             {
-            "SourcePath" = "8:..\\ExternalToolsInstaller\\obj\\Debug\\ExternalToolsInstaller.dll"
+            "SourcePath" = "8:..\\ExternalToolsInstaller\\obj\\Release\\ExternalToolsInstaller.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3C819D033B8E4ED29DA3C4B4E2E7B98C"
