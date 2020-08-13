@@ -105,8 +105,9 @@ namespace AnalyzeInExcel
                             {
                                 // TODO request action / configuration to users
                             }
-                            
-                            RunExcelProcess(serverName, databaseName, cubeName);
+
+                            ExcelHelper.CreateInstanceWithPivotTable(serverName, databaseName, cubeName);
+                            //RunExcelProcess(serverName, databaseName, cubeName);
                             th.TrackEvent("Run Excel");
                         }
                         else
