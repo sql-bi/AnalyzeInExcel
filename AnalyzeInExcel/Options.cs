@@ -12,5 +12,8 @@ namespace AnalyzeInExcel
 
         [Option('n', "telemetry", HelpText = "Enable Telemetry")]
         public bool Telemetry { get; set; }
+
+        [Option('x', "experiment", HelpText = "Experiment feature")]
+        public bool Experiment { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using System.Windows;
 using System.Diagnostics;
 using AutoUpdaterDotNET;
 using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace AnalyzeInExcel
 {
@@ -106,9 +107,29 @@ namespace AnalyzeInExcel
                                 // TODO request action / configuration to users
                             }
 
-                            ExcelHelper.CreateInstanceWithPivotTable(serverName, databaseName, cubeName);
-                            //RunExcelProcess(serverName, databaseName, cubeName);
-                            th.TrackEvent("Run Excel");
+                            var splashScreen = new SplashLoading();
+                            try
+                            {
+                                this.MainWindow = splashScreen;
+                                splashScreen.Show();
+
+                                bool experiment = (((App)Current).AppOptions != null) ? ((App)Current).AppOptions.Experiment : false;
+                                bool excelStarted = false;
+                                if (experiment)
+                                {
+                                    excelStarted = ExcelHelper.CreateInstanceWithPivotTable(serverName, databaseName, cubeName, (ex) => th.TrackException(ex));
+                                    if (excelStarted) th.TrackEvent("Run Excel Experiment");
+                                }
+                                if (!excelStarted)
+                                {
+                                    RunExcelProcess(serverName, databaseName, cubeName);
+                                    th.TrackEvent("Run Excel");
+                                }
+                            }
+                            finally
+                            {
+                                splashScreen.Close();
+                            }
                         }
                         else
                         {
@@ -163,6 +184,7 @@ namespace AnalyzeInExcel
         {
             //// start application window
             MainWindow mw = new MainWindow();
+            this.MainWindow = mw;
             mw.diagnosticInfo.Content = $@"Current configuration
 Server={serverName ?? "(blank)"}
 Database={databaseName ?? "(blank)"}
