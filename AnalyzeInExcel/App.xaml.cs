@@ -18,6 +18,13 @@ namespace AnalyzeInExcel
         public Options AppOptions;
         const string MSOLAP_DRIVER_URL = @"https://go.microsoft.com/fwlink/?LinkId=746283";
 
+        const string EV_MSOLAP_NOTFOUND = "MSOLAP driver not found";
+        const string EV_MSOLAP_SETUP = "Requested MSOLAP driver setup";
+        const string EV_MODEL_NOT_AVAILABLE = "Model not available";
+        const string EV_EXCEL_NOT_AVAILABLE = "Excel not available";
+        const string EV_CONFIGURATION_INCOMPLETE = "Configuration incomplete";
+        const string EV_RUNEXCEL = "Run Excel";
+
         public void CheckUpdates(bool synchronous = true)
         {
             AutoUpdater.HttpUserAgent = "AutoUpdater";
@@ -72,12 +79,12 @@ namespace AnalyzeInExcel
                 bool goodMsOlapDriver = ModelHelper.HasMsOlapDriver();
                 if (!goodMsOlapDriver)
                 {
-                    th.TrackEvent("MSOLAP driver not found");
+                    th.TrackEvent(EV_MSOLAP_NOTFOUND);
                     if (ShowMessageQuestion($"Excel needs a component called MSOLAP driver to connect to Power BI. The MSOLAP driver might be missing or not updated on this device. Therefore, Excel might not connect to Power BI. You can install the updated Microsoft MSOLAP driver from this link: {MSOLAP_DRIVER_URL} \n\nClick YES if you want to download the updated MSOLAP driver and install it.\nClick NO to continue without any update.") == MessageBoxResult.Yes)
                     {
                         try
                         {
-                            th.TrackEvent("Requested MSOLAP driver setup");
+                            th.TrackEvent(EV_MSOLAP_SETUP);
                             UpdateMsOlapDriver();
                         }
                         catch (Exception ex)
@@ -97,7 +104,7 @@ namespace AnalyzeInExcel
                         if (string.IsNullOrEmpty(cubeName))
                         {
                             ShowMessage("Power BI has an empty model or it is connected to an unkonwn external dataset. You cannot connect Excel.");
-                            th.TrackEvent("Model not available");
+                            th.TrackEvent(EV_MODEL_NOT_AVAILABLE);
                         }
                         else if (ExcelHelper.IsExcelAvailable())
                         {
@@ -118,12 +125,12 @@ namespace AnalyzeInExcel
                                 if (experiment)
                                 {
                                     excelStarted = ExcelHelper.CreateInstanceWithPivotTable(serverName, databaseName, cubeName, (ex) => th.TrackException(ex));
-                                    if (excelStarted) th.TrackEvent("Run Excel Experiment");
+                                    if (excelStarted) th.TrackEvent(EV_RUNEXCEL, "RunType", "Interop");
                                 }
                                 if (!excelStarted)
                                 {
                                     RunExcelProcess(serverName, databaseName, cubeName);
-                                    th.TrackEvent("Run Excel");
+                                    th.TrackEvent(EV_RUNEXCEL, "RunType", "ODC File");
                                 }
                             }
                             finally
@@ -134,7 +141,7 @@ namespace AnalyzeInExcel
                         else
                         {
                             ShowMessage("Excel is not available. Please check whether Excel is correctly installed.");
-                            th.TrackEvent("Excel not available");
+                            th.TrackEvent(EV_EXCEL_NOT_AVAILABLE);
                         }
                         th.Flush();
 
@@ -151,7 +158,7 @@ namespace AnalyzeInExcel
                 }
                 else
                 {
-                    th.TrackEvent("Configuration incomplete");
+                    th.TrackEvent(EV_CONFIGURATION_INCOMPLETE);
                     th.Flush();
                 }
 

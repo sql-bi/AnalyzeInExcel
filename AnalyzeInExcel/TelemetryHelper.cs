@@ -39,6 +39,12 @@ namespace AnalyzeInExcel
         {
             TC.TrackEvent(CreateEvent(eventName));
         }
+        public void TrackEvent(string eventName, string propertyName, string propertyValue)
+        {
+            var ev = CreateEvent(eventName);
+            ev.Properties[propertyName] = propertyValue;
+            TC.TrackEvent(ev);
+        }
 
         public void TrackException(Exception exception)
         {

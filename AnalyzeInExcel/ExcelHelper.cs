@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace AnalyzeInExcel
 {
@@ -22,105 +23,60 @@ namespace AnalyzeInExcel
             return (type != null);
         }
 
+        /// <summary>
+        /// Create a new Excel file with a PivotTable connected to the server/database/cube provided
+        /// </summary>
+        /// <param name="serverName"></param>
+        /// <param name="databaseName"></param>
+        /// <param name="cubeName"></param>
+        /// <param name="exceptionAction">Action that processes any exception - the function will return false, this is a way to manage logging/telemetry</param>
+        /// <returns>true if the operation completes without errors, otherwise false (any exception is removed and the function returns false)</returns>
          public static bool CreateInstanceWithPivotTable(string serverName, string databaseName, string cubeName, Action<Exception> exceptionAction )
-        {
-            const int XlLayoutRowType_xlCompactRow = 0; // Excel.XlLayoutRowType.xlCompactRow
-            const int XlPivotTableSourceType_xlExternal = 2; // Excel.XlPivotTableSourceType.xlExternal
-            const int XlPivotFieldRepeatLabels_xlRepeatLabels = 2; // Excel.XlPivotFieldRepeatLabels.xlRepeatLabels
-            
+         {
             var connectionString = ModelHelper.GetOleDbConnectionString(serverName, databaseName);
             var connectionName = $"AnalyzeInExcel [{ serverName }].[{ databaseName }].[{ cubeName }]";
             var commandText = cubeName;
             var pivotTableName = $"AnalyzeInExcelPivotTable";
 
-            var type = Type.GetTypeFromProgID("Excel.Application");
-            if (type == null)
-                return false;
-
-            dynamic app = Activator.CreateInstance(type);
             try
             {
-                try
-                {
-                    var workbook = app.Workbooks.Add();
+                Excel.Application app = new Excel.Application();
+                
+                // Create a new workbook
+                var workbook = app.Workbooks.Add();
 
-                    var workbookConnection = workbook.Connections.Add(
-                        Name: connectionName,
-                        Description: "",
-                        ConnectionString: $"OLEDB;{ connectionString }",
-                        CommandText: commandText,
-                        lCmdtype: 1
-                        );
+                // Create the connection
+                var workbookConnection = workbook.Connections.Add(
+                    Name: connectionName,
+                    Description: "",
+                    ConnectionString: $"OLEDB;{ connectionString }",
+                    CommandText: commandText,
+                    lCmdtype: 1
+                    );
 
-                    var pivotCache = workbook.PivotCaches().Create(
-                        SourceType: XlPivotTableSourceType_xlExternal,
-                        SourceData: workbookConnection
-                        );
+                // Create the pivotcache
+                var pivotCache = workbook.PivotCaches().Create(
+                    SourceType: Excel.XlPivotTableSourceType.xlExternal,
+                    SourceData: workbookConnection
+                    );
+                pivotCache.RefreshOnFileOpen = false;
 
-                    #region Configure PivotCache
+                // Get the active worksheet
+                var worksheet = workbook.ActiveSheet;
 
-                    pivotCache.RefreshOnFileOpen = false;
+                // Create the PivotTable
+                var pivotTable = pivotCache.CreatePivotTable(
+                    TableDestination: worksheet.Range["A1"],
+                    TableName: pivotTableName,
+                    ReadData: false
+                    );
 
-                    #endregion
+                // Show Excel
+                app.Visible = true;
 
-                    var worksheet = workbook.ActiveSheet;
-
-                    var pivotTable = pivotCache.CreatePivotTable(
-                        TableDestination: worksheet.Range["A1"],
-                        TableName: pivotTableName,
-                        ReadData: false
-                        );
-
-                    #region Configure PivotTable
-
-                    pivotTable.ColumnGrand = true;
-                    pivotTable.HasAutoFormat = true;
-                    pivotTable.DisplayErrorString = true;
-                    pivotTable.DisplayNullString = true;
-                    pivotTable.EnableDrilldown = true;
-                    pivotTable.ErrorString = "";
-                    pivotTable.MergeLabels = false;
-                    pivotTable.NullString = "";
-                    pivotTable.PageFieldOrder = 2;
-                    pivotTable.PageFieldWrapCount = 0;
-                    pivotTable.PreserveFormatting = true;
-                    pivotTable.RowGrand = true;
-                    pivotTable.PrintTitles = false;
-                    pivotTable.RepeatItemsOnEachPrintedPage = true;
-                    pivotTable.TotalsAnnotation = true;
-                    pivotTable.CompactRowIndent = 1;
-                    pivotTable.VisualTotals = false;
-                    pivotTable.InGridDropZones = false;
-                    pivotTable.DisplayFieldCaptions = true;
-                    pivotTable.DisplayMemberPropertyTooltips = true;
-                    pivotTable.DisplayContextTooltips = true;
-                    pivotTable.ShowDrillIndicators = true;
-                    pivotTable.PrintDrillIndicators = false;
-                    pivotTable.DisplayEmptyRow = false;
-                    pivotTable.DisplayEmptyColumn = false;
-                    pivotTable.AllowMultipleFilters = false;
-                    pivotTable.SortUsingCustomLists = true;
-                    pivotTable.DisplayImmediateItems = true;
-                    pivotTable.ViewCalculatedMembers = true;
-                    pivotTable.EnableWriteback = false;
-                    pivotTable.ShowValuesRow = false;
-                    pivotTable.CalculatedMembersInFilters = true;
-                    pivotTable.RowAxisLayout(XlLayoutRowType_xlCompactRow);
-                    pivotTable.RepeatAllLabels(XlPivotFieldRepeatLabels_xlRepeatLabels);
-
-                    #endregion
-
-                    // Show Excel
-                    app.Visible = true;
-
-                    // Set Excel window as foreground window
-                    var hwnd = app.Hwnd;
-                    SetForegroundWindow((IntPtr)hwnd);  // Note Hwnd is declared as int
-                }
-                finally
-                {
-                    Marshal.ReleaseComObject(app);
-                }
+                // Set Excel window as foreground window
+                var hwnd = app.Hwnd;
+                SetForegroundWindow((IntPtr)hwnd);  // Note Hwnd is declared as int
             }
             catch (Exception ex)
             {
