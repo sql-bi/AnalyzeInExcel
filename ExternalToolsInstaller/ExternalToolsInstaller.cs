@@ -198,5 +198,6 @@ namespace ExternalToolsInstaller
                 throw;
             }
         }
+
     }
 }

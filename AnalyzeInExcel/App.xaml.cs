@@ -120,15 +120,12 @@ namespace AnalyzeInExcel
                                 this.MainWindow = splashScreen;
                                 splashScreen.Show();
 
-                                bool experiment = (((App)Current).AppOptions != null) ? ((App)Current).AppOptions.Experiment : false;
-                                bool excelStarted = false;
-                                if (experiment)
+                                bool excelStarted = ExcelHelper.CreateInstanceWithPivotTable(serverName, databaseName, cubeName, (ex) => th.TrackException(ex));
+                                if (excelStarted)
                                 {
-                                    excelStarted = ExcelHelper.CreateInstanceWithPivotTable(serverName, databaseName, cubeName, (ex) => th.TrackException(ex));
-                                    if (excelStarted) th.TrackEvent(EV_RUNEXCEL, "RunType", "Interop");
+                                    th.TrackEvent(EV_RUNEXCEL, "RunType", "Interop");
                                 }
-                                if (!excelStarted)
-                                {
+                                else {
                                     RunExcelProcess(serverName, databaseName, cubeName);
                                     th.TrackEvent(EV_RUNEXCEL, "RunType", "ODC File");
                                 }

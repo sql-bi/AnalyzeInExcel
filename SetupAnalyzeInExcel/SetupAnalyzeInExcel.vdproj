@@ -3420,8 +3420,8 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Analyze in Excel for Power BI Desktop"
-        "ProductCode" = "8:{FD892738-C170-4D2F-9C67-8C2DA5272C8D}"
-        "PackageCode" = "8:{753DFF51-E645-408C-91D9-38540E786CDF}"
+        "ProductCode" = "8:{74F9C867-CF8A-4950-8406-6697988E2C17}"
+        "PackageCode" = "8:{3069CC2A-89EA-49B7-8DE5-444F6035B395}"
         "UpgradeCode" = "8:{FC2F9C00-CAD5-455E-BD9D-B1C607F4ABDA}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
