@@ -39,10 +39,13 @@ namespace AnalyzeInExcel
         {
             TC.TrackEvent(CreateEvent(eventName));
         }
-        public void TrackEvent(string eventName, string propertyName, string propertyValue)
+        public void TrackEvent(string eventName, IEnumerable<(string propertyName, string propertyValue)> properties)
         {
             var ev = CreateEvent(eventName);
-            ev.Properties[propertyName] = propertyValue;
+            foreach (var (propertyName, propertyValue) in properties)
+            {
+                ev.Properties[propertyName] = propertyValue;
+            }
             TC.TrackEvent(ev);
         }
 

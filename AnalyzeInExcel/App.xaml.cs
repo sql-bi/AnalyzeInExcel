@@ -7,6 +7,7 @@ using System.Diagnostics;
 using AutoUpdaterDotNET;
 using System.Windows.Input;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace AnalyzeInExcel
 {
@@ -120,14 +121,14 @@ namespace AnalyzeInExcel
                                 this.MainWindow = splashScreen;
                                 splashScreen.Show();
 
-                                bool excelStarted = ExcelHelper.CreateInstanceWithPivotTable(serverName, databaseName, cubeName, (ex) => th.TrackException(ex));
+                                bool excelStarted = ExcelHelper.CreateInstanceWithPivotTable(serverName, databaseName, cubeName, out string excelVersion, (ex) => th.TrackException(ex));
                                 if (excelStarted)
                                 {
-                                    th.TrackEvent(EV_RUNEXCEL, "RunType", "Interop");
+                                    th.TrackEvent(EV_RUNEXCEL, new (string propertyName, string propertyValue)[] { ("RunType", "Interop"), ("ExcelVersion", excelVersion) });
                                 }
                                 else {
                                     RunExcelProcess(serverName, databaseName, cubeName);
-                                    th.TrackEvent(EV_RUNEXCEL, "RunType", "ODC File");
+                                    th.TrackEvent(EV_RUNEXCEL, new (string propertyName, string propertyValue)[] { ( "RunType", "ODC File" ) } );
                                 }
                             }
                             finally

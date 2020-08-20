@@ -31,7 +31,7 @@ namespace AnalyzeInExcel
         /// <param name="cubeName"></param>
         /// <param name="exceptionAction">Action that processes any exception - the function will return false, this is a way to manage logging/telemetry</param>
         /// <returns>true if the operation completes without errors, otherwise false (any exception is removed and the function returns false)</returns>
-         public static bool CreateInstanceWithPivotTable(string serverName, string databaseName, string cubeName, Action<Exception> exceptionAction )
+         public static bool CreateInstanceWithPivotTable(string serverName, string databaseName, string cubeName, out string excelVersion, Action<Exception> exceptionAction )
          {
             var connectionString = ModelHelper.GetOleDbConnectionString(serverName, databaseName);
             var connectionName = $"AnalyzeInExcel [{ serverName }].[{ databaseName }].[{ cubeName }]";
@@ -41,6 +41,9 @@ namespace AnalyzeInExcel
             try
             {
                 Excel.Application app = new Excel.Application();
+
+                // Return Excel Version for diagnostics
+                excelVersion = app.Version;
                 
                 // Create a new workbook
                 var workbook = app.Workbooks.Add();
@@ -82,6 +85,7 @@ namespace AnalyzeInExcel
             {
                 // In case of error simply fails the request and forward the exception
                 exceptionAction?.Invoke(ex);
+                excelVersion = "<unknown>";
                 return false;
             }
             return true;

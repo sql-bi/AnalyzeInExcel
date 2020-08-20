@@ -52,8 +52,7 @@ namespace AnalyzeInExcel
 
         private static Point GetCursorPosition()
         {
-            POINT cursorScreenPosition;
-            GetCursorPos(out cursorScreenPosition);
+            GetCursorPos(out POINT cursorScreenPosition);
 
             double widthInDevicePixels = SplashLoading.GetSystemMetrics(SplashLoading.SM_CXSCREEN);
             double widthInDIP = SystemParameters.WorkArea.Right; // Device independent pixels.
