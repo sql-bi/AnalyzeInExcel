@@ -250,6 +250,12 @@
         "Entry"
         {
         "MsmKey" = "8:_3C902508D3CE8EDE5A4C9D5CADDF0AB0"
+        "OwnerKey" = "8:_52B0E9D0B87482DE9B8922D18E308485"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3C902508D3CE8EDE5A4C9D5CADDF0AB0"
         "OwnerKey" = "8:_A1D43F900F5CCB145E023F9F1A25ECF5"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -285,6 +291,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_46F166F6A64936AC362EA8D86FCBED43"
+        "OwnerKey" = "8:_52B0E9D0B87482DE9B8922D18E308485"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_47DFD11357F54282D35732FBEC73D3AB"
         "OwnerKey" = "8:_B8059F38185844FF9E7100633B552E00"
         "MsmSig" = "8:_UNDEFINED"
@@ -323,6 +335,12 @@
         {
         "MsmKey" = "8:_4EC7D23069459502C0C8A71C8C992339"
         "OwnerKey" = "8:_A1D43F900F5CCB145E023F9F1A25ECF5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_52B0E9D0B87482DE9B8922D18E308485"
+        "OwnerKey" = "8:_B8059F38185844FF9E7100633B552E00"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -497,6 +515,12 @@
         {
         "MsmKey" = "8:_7DA61F33171D7E5AACEF062DC5411D18"
         "OwnerKey" = "8:_BE740B1BEB9D410F82DDE5AF811E1E7C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7DA61F33171D7E5AACEF062DC5411D18"
+        "OwnerKey" = "8:_52B0E9D0B87482DE9B8922D18E308485"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2087,6 +2111,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_52B0E9D0B87482DE9B8922D18E308485"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_52B0E9D0B87482DE9B8922D18E308485"
+                    {
+                    "Name" = "8:System.ValueTuple.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.ValueTuple.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_3C819D033B8E4ED29DA3C4B4E2E7B98C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_530733CBB7AC857E0604D9EEE243CD8F"
             {
             "AssemblyRegister" = "3:1"
@@ -3420,15 +3475,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Analyze in Excel for Power BI Desktop"
-        "ProductCode" = "8:{0BD291BA-8877-4547-9880-E07D08132653}"
-        "PackageCode" = "8:{A6A390AF-E3F0-40B8-ADF5-4D994A58EB43}"
+        "ProductCode" = "8:{F66B3EF4-F11D-45AA-A8CC-3AF262F768CC}"
+        "PackageCode" = "8:{F26D18E9-E9B4-47B5-9173-D8DEF76A41C2}"
         "UpgradeCode" = "8:{FC2F9C00-CAD5-455E-BD9D-B1C607F4ABDA}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.1.1"
+        "ProductVersion" = "8:1.1.2"
         "Manufacturer" = "8:Sqlbi"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

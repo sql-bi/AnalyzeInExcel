@@ -121,14 +121,22 @@ namespace AnalyzeInExcel
                                 this.MainWindow = splashScreen;
                                 splashScreen.Show();
 
-                                bool excelStarted = ExcelHelper.CreateInstanceWithPivotTable(serverName, databaseName, cubeName, out string excelVersion, (ex) => th.TrackException(ex));
+                                bool excelStarted = ExcelHelper.CreateInstanceWithPivotTableViaInterop(serverName, databaseName, cubeName, out string excelVersion, (ex) => th.TrackException(ex));
                                 if (excelStarted)
                                 {
                                     th.TrackEvent(EV_RUNEXCEL, new (string propertyName, string propertyValue)[] { ("RunType", "Interop"), ("ExcelVersion", excelVersion) });
                                 }
                                 else {
-                                    RunExcelProcess(serverName, databaseName, cubeName);
-                                    th.TrackEvent(EV_RUNEXCEL, new (string propertyName, string propertyValue)[] { ( "RunType", "ODC File" ) } );
+                                    excelStarted = ExcelHelper.CreateInstanceWithPivotTableViaDispatch(serverName, databaseName, cubeName, out excelVersion, (ex) => th.TrackException(ex));
+                                    if (excelStarted)
+                                    {
+                                        th.TrackEvent(EV_RUNEXCEL, new (string propertyName, string propertyValue)[] { ("RunType", "Dispatch"), ("ExcelVersion", excelVersion) });
+                                    }
+                                    else
+                                    {
+                                        RunExcelProcess(serverName, databaseName, cubeName);
+                                        th.TrackEvent(EV_RUNEXCEL, new (string propertyName, string propertyValue)[] { ("RunType", "ODC File") });
+                                    }
                                 }
                             }
                             finally
