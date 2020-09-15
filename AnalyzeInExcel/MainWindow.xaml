@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AnalyzeInExcel"
         mc:Ignorable="d"
-        Title="Analyze in Excel for Power BI Desktop" Height="300" Width="800" Icon="sqlbi-2400.png">
+        Title="Analyze in Excel for Power BI Desktop" Height="300" Width="800" Icon="icon-2400px.png">
     <Grid>
         <DockPanel>
             <Label DockPanel.Dock="Top" Content="Analyze in Excel for Power BI Desktop is not able to launch Excel." HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Calibri" FontSize="14" FontWeight="Bold"/>

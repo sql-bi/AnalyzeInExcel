@@ -48,7 +48,7 @@ namespace AnalyzeInExcel
         protected void InitializeOptionRequested()
         {
             // Pressing CTRL (left or right) when the external tool is launched activates the option window
-            OptionsRequested = System.Windows.Input.Keyboard.IsKeyDown(Key.LeftCtrl) || System.Windows.Input.Keyboard.IsKeyDown(Key.LeftCtrl);
+            OptionsRequested = System.Windows.Input.Keyboard.IsKeyDown(Key.LeftCtrl) || System.Windows.Input.Keyboard.IsKeyDown(Key.RightCtrl);
         }
 
         public MessageBoxResult ShowMessage( string message )
