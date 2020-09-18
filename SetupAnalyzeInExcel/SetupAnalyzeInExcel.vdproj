@@ -2138,7 +2138,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -2784,8 +2784,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9C68287DAA31436F922D085D14F8FAD4"
             {
-            "SourcePath" = "8:..\\AnalyzeInExcel\\sqlbi-2400.ico"
-            "TargetName" = "8:sqlbi-2400.ico"
+            "SourcePath" = "8:..\\AnalyzeInExcel\\icon-2400px.ico"
+            "TargetName" = "8:icon-2400px.ico"
             "Tag" = "8:"
             "Folder" = "8:_3C819D033B8E4ED29DA3C4B4E2E7B98C"
             "Condition" = "8:"
@@ -3016,8 +3016,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BA6D88F090364C08B4DC410E045864A0"
             {
-            "SourcePath" = "8:..\\AnalyzeInExcel\\sqlbi-500x70.jpg"
-            "TargetName" = "8:sqlbi-500x70.jpg"
+            "SourcePath" = "8:..\\AnalyzeInExcel\\banner-500x70.jpg"
+            "TargetName" = "8:banner-500x70.jpg"
             "Tag" = "8:"
             "Folder" = "8:_3C819D033B8E4ED29DA3C4B4E2E7B98C"
             "Condition" = "8:"
@@ -3475,15 +3475,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Analyze in Excel for Power BI Desktop"
-        "ProductCode" = "8:{F66B3EF4-F11D-45AA-A8CC-3AF262F768CC}"
-        "PackageCode" = "8:{F26D18E9-E9B4-47B5-9173-D8DEF76A41C2}"
+        "ProductCode" = "8:{27AE163F-1B12-4B96-BE9E-D7C173331395}"
+        "PackageCode" = "8:{11CC8104-3FAE-43E6-9A68-9647D6D37DE7}"
         "UpgradeCode" = "8:{FC2F9C00-CAD5-455E-BD9D-B1C607F4ABDA}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.1.2"
+        "ProductVersion" = "8:1.1.3"
         "Manufacturer" = "8:Sqlbi"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
