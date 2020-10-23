@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Linq;
 
 namespace AnalyzeInExcel
 {
@@ -23,6 +24,13 @@ namespace AnalyzeInExcel
             return (type != null);
         }
 
+        public static string GetSafeConnectionName( string serverName, string databaseName, string cubeName )
+        {
+            string connectionName = $"AnalyzeInExcel [{ serverName }].[{ databaseName }].[{ cubeName }]";
+            connectionName = System.IO.Path.GetInvalidFileNameChars().Aggregate(connectionName, (current, c) => current.Replace(c.ToString(), "_"));
+            return connectionName;
+        }
+
         /// <summary>
         /// Create a new Excel file with a PivotTable connected to the server/database/cube provided
         /// </summary>
@@ -34,7 +42,7 @@ namespace AnalyzeInExcel
          public static bool CreateInstanceWithPivotTableViaInterop(string serverName, string databaseName, string cubeName, out string excelVersion, Action<Exception> exceptionAction )
          {
             var connectionString = ModelHelper.GetOleDbConnectionString(serverName, databaseName);
-            var connectionName = $"AnalyzeInExcel [{ serverName }].[{ databaseName }].[{ cubeName }]";
+            var connectionName = GetSafeConnectionName( serverName, databaseName, cubeName );
             var commandText = cubeName;
             var pivotTableName = $"AnalyzeInExcelPivotTable";
 
@@ -93,7 +101,7 @@ namespace AnalyzeInExcel
         public static bool CreateInstanceWithPivotTableViaDispatch(string serverName, string databaseName, string cubeName, out string excelVersion, Action<Exception> exceptionAction)
         {
             string connectionString = ModelHelper.GetOleDbConnectionString(serverName, databaseName);
-            string connectionName = $"AnalyzeInExcel [{ serverName }].[{ databaseName }].[{ cubeName }]";
+            string connectionName = GetSafeConnectionName(serverName, databaseName, cubeName);
             string commandText = cubeName;
             string pivotTableName = $"AnalyzeInExcelPivotTable";
             string foundExcelVersion = null;
