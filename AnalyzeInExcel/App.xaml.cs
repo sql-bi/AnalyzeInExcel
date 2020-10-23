@@ -62,6 +62,11 @@ namespace AnalyzeInExcel
 
         protected override void OnStartup(StartupEventArgs e)
         {
+
+#if DEBUG
+            System.Diagnostics.Debugger.Launch();
+#endif
+
             // Store request to access options
             InitializeOptionRequested();
 
