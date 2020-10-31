@@ -57,13 +57,14 @@ namespace AnalyzeInExcel
                 var workbook = app.Workbooks.Add();
 
                 // Create the connection
-                var workbookConnection = workbook.Connections.Add(
+                var workbookConnection = workbook.Connections.Add2(
                     Name: connectionName,
                     Description: "",
                     ConnectionString: $"OLEDB;{ connectionString }",
                     CommandText: commandText,
                     lCmdtype: 1
                     );
+                workbookConnection.OLEDBConnection.MaintainConnection = true;
 
                 // Create the pivotcache
                 var pivotCache = workbook.PivotCaches().Create(
@@ -119,13 +120,14 @@ namespace AnalyzeInExcel
                 dynamic workbook = app.Workbooks.Add();
 
                 // Create the connection
-                dynamic workbookConnection = workbook.Connections.Add(
+                dynamic workbookConnection = workbook.Connections.Add2(
                     Name: connectionName,
                     Description: "",
                     ConnectionString: $"OLEDB;{ connectionString }",
                     CommandText: commandText,
                     lCmdtype: 1
                     );
+                workbookConnection.OLEDBConnection.MaintainConnection = true;
 
                 // Create the pivotcache
                 dynamic pivotCache = workbook.PivotCaches().Create(
