@@ -73,20 +73,9 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="FodyWeavers.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="icon-2400px.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Costura.Fody">
-      <Version>3.3.3</Version>
-    </PackageReference>
-    <PackageReference Include="Fody">
-      <Version>4.2.1</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.ApplicationInsights">
       <Version>2.14.0</Version>
     </PackageReference>
