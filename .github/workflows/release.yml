@@ -1,0 +1,152 @@
+# Builds AnalyzeInExcel and its MSI installer, then uploads the MSI as a workflow
+# artifact and creates a GitHub release. Manual trigger only.
+#
+# IMPORTANT: If this workflow is modified, verify that signing is applied to both
+# the final MSI and the binaries it contains (EXE/DLL). Unsigned binaries may be
+# blocked by antivirus/security software and result in an unusable installation.
+
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  BuildConfiguration: Release
+  BuildPlatform: Any CPU
+
+jobs:
+  build-sign-release:
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v3
+        
+      - name: Install AzureSignTool
+        shell: pwsh
+        run: dotnet tool install --global AzureSignTool
+
+      - name: Install Visual Studio Installer Projects extension
+        shell: pwsh
+        run: |
+          # Required to build the .vdproj setup project via devenv.
+          # If this step starts failing, check the current VSIX id/version on the
+          # Visual Studio Marketplace for "Microsoft Visual Studio Installer Projects 2022".
+          $vsixUrl = "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/visualstudioclient/vsextensions/microsoftvisualstudio2022installerprojects/2.0.1/vspackage"
+          $vsixPath = "$env:TEMP\InstallerProjects.vsix"
+          Invoke-WebRequest -Uri $vsixUrl -OutFile $vsixPath
+
+          $vsixInstaller = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\VSIXInstaller.exe"
+          $process = Start-Process -FilePath $vsixInstaller -ArgumentList "/quiet", "/admin", $vsixPath -Wait -PassThru
+          if ($process.ExitCode -ne 0 -and $process.ExitCode -ne 1001) {
+            # 1001 = already installed
+            throw "VSIXInstaller failed with exit code $($process.ExitCode)"
+          }
+
+      - name: Restore and build solution
+        shell: pwsh
+        run: |
+          msbuild AnalyzeInExcel.sln -t:Restore,Build `
+            -p:Configuration=$env:BuildConfiguration `
+            -p:Platform="$env:BuildPlatform" `
+            -v:minimal
+
+      - name: Read version from build output
+        id: version
+        shell: pwsh
+        run: |
+          $rawVersion = (Get-Item "AnalyzeInExcel\bin\Release\AnalyzeInExcel.exe").VersionInfo.FileVersion
+          # FileVersion is Major.Minor.Build.Revision (e.g. 1.1.4.0);
+          # drop the revision to get a semver-style Major.Minor.Build.
+          $version = ($rawVersion -split '\.')[0..2] -join '.'
+          Write-Host "File version: $rawVersion -> $version"
+          "fileVersion=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Sign EXE/DLL
+        shell: pwsh
+        run: |
+          # Sign both the intermediate (obj) and output (bin) copies.
+          # The installer (.vdproj) build may build project dependencies and copy files
+          # from obj to bin. If only the bin copies were signed, this could overwrite
+          # the signed files with unsigned copies during the installer build. Signing
+          # both locations ensures that either copy used by the installer remains signed.
+          azuresigntool sign `
+            -kvu "${{ secrets.CODESIGNING_VAULT_URL }}" `
+            -kvt "${{ secrets.CODESIGNING_TENANT_ID }}" `
+            -kvi "${{ secrets.CODESIGNING_CLIENT_ID }}" `
+            -kvs "${{ secrets.CODESIGNING_CLIENT_SECRET }}" `
+            -kvc "${{ secrets.CODESIGNING_CERTIFICATE_NAME }}" `
+            -tr http://timestamp.digicert.com `
+            -td sha256 -fd sha256 -v `
+            "AnalyzeInExcel\obj\Release\AnalyzeInExcel.exe" `
+            "AnalyzeInExcel\bin\Release\AnalyzeInExcel.exe" `
+            "ExternalToolsInstaller\obj\Release\ExternalToolsInstaller.dll" `
+            "ExternalToolsInstaller\bin\Release\ExternalToolsInstaller.dll"
+
+      - name: Disable out-of-proc build (VDPROJ CLI workaround)
+        shell: pwsh
+        working-directory: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild
+        run: |
+          # devenv's command-line build of a .vdproj runs its pre-build validation
+          # out-of-process; on a CI agent this reliably fails with
+          # "An error occurred while validating. HRESULT = '8000000A'".
+          # DisableOutOfProcBuild.exe fails to find the VS instance unless the
+          # current directory is the tool's own folder when it's invoked - see
+          # https://github.com/it3xl/MSBuild-DevEnv-Build-Server-Workarounds/issues/1
+          .\DisableOutOfProcBuild.exe
+          if ($LASTEXITCODE -ne 0) {
+            throw "DisableOutOfProcBuild.exe failed with exit code $LASTEXITCODE"
+          }
+
+      - name: Build installer (.vdproj)
+        shell: pwsh
+        run: |
+          # Build only the setup project, not the whole solution, so that once
+          # signing is re-enabled above, the already-signed EXE/DLL are packaged
+          # as-is and not recompiled (which would silently overwrite them with
+          # unsigned output).
+          $devenv = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\devenv.com"
+          & $devenv "AnalyzeInExcel.sln" /Build $env:BuildConfiguration /Project "SetupAnalyzeInExcel\SetupAnalyzeInExcel.vdproj"
+          if ($LASTEXITCODE -ne 0) {
+            throw "devenv installer build failed with exit code $LASTEXITCODE"
+          }
+
+      - name: Re-enable out-of-proc build
+        shell: pwsh
+        working-directory: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild
+        run: .\DisableOutOfProcBuild.exe undo
+
+      - name: Sign MSI
+        shell: pwsh
+        run: |
+          azuresigntool sign `
+            -kvu "${{ secrets.CODESIGNING_VAULT_URL }}" `
+            -kvt "${{ secrets.CODESIGNING_TENANT_ID }}" `
+            -kvi "${{ secrets.CODESIGNING_CLIENT_ID }}" `
+            -kvs "${{ secrets.CODESIGNING_CLIENT_SECRET }}" `
+            -kvc "${{ secrets.CODESIGNING_CERTIFICATE_NAME }}" `
+            -tr http://timestamp.digicert.com `
+            -td sha256 -fd sha256 -v `
+            "SetupAnalyzeInExcel\Release\AnalyzeInExcel.msi"
+
+      - name: Rename MSI with version
+        shell: pwsh
+        run: |
+          $fileVersion = "${{ steps.version.outputs.fileVersion }}"
+          Move-Item "SetupAnalyzeInExcel\Release\AnalyzeInExcel.msi" "SetupAnalyzeInExcel\Release\AnalyzeInExcel-$fileVersion.msi"
+
+      - name: Upload artifact (drop)
+        uses: actions/upload-artifact@v4
+        with:
+          name: drop
+          path: SetupAnalyzeInExcel/Release/AnalyzeInExcel-${{ steps.version.outputs.fileVersion }}.msi
+
+      # - name: Publish GitHub Release (TODO)
+      #   uses: ...
+  
