@@ -74,7 +74,7 @@ namespace AnalyzeInExcel
                 pivotCache.RefreshOnFileOpen = false;
 
                 // Get the active worksheet
-                var worksheet = workbook.ActiveSheet;
+                var worksheet = (Excel.Worksheet)workbook.ActiveSheet;
 
                 // Create the PivotTable
                 var pivotTable = pivotCache.CreatePivotTable(
